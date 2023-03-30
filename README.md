@@ -4,6 +4,8 @@ Assignment of Infrastructure as Code lesson from Udacity
 # Deploy a High Availability Web App With Cloudformation
 Udacity Cloud DevOps Engineer Nanodegree Program - Project 2
 
+<details>
+  <summary>Click here to see detail of projecr requirements and consideration</summary>
 ## Introduction
 As your final project, you'll be faced with a real scenario.
 
@@ -52,22 +54,23 @@ You should be able to destroy the entire infrastructure and build it back up wit
 8. If you want to go the extra mile, set up a bastion host (jump box) to allow you to SSH into your private subnet servers. This bastion host would be on a Public Subnet with port 22 open only to your home IP address, and it would need to have the private key that you use to access the other servers.
 
   > Last thing: Remember to delete your CloudFormation stack when you're done to avoid recurring charges!
+</details>
 
 ## Solution
 
-### Architecture
+### 1. Architecture
 ![Architecture](https://github.com/nvtoan263/IAC-Udagram-ToanNV15/blob/main/0.%20infrastructure-diagram/IAC-Diagram-ToanNV15.jpeg)
 
-### Templates
+### 2. Templates
 - [Network](https://github.com/nvtoan263/IAC-Udagram-ToanNV15/blob/main/1.%20cloudformation-scripts/network-parameters.json)
 - [Server](https://github.com/nvtoan263/IAC-Udagram-ToanNV15/blob/main/1.%20cloudformation-scripts/ToanNV15-server.yml)
 - [JumpBox](https://github.com/nvtoan263/IAC-Udagram-ToanNV15/blob/main/1.%20cloudformation-scripts/ToanNV15-jumpbox.yml)
 
-### Parameters
+### 3. Parameters
 - [Network](https://github.com/nvtoan263/IAC-Udagram-ToanNV15/blob/main/1.%20cloudformation-scripts/network-parameters.json)
 - [Server & JumpBox](https://github.com/nvtoan263/IAC-Udagram-ToanNV15/blob/main/1.%20cloudformation-scripts/server-parameters.json)
 
-### Set up
+### 4. Set up
 Get into project folder `IAC-Udagram-ToanNV15`
 ```sh
 cd IAC-Udagram-ToanNV15
@@ -88,6 +91,6 @@ cd IAC-Udagram-ToanNV15
 #### Create server stacks
 Update stack by using update scripts accordingly
 
-### Output images
+### 5. Output images
 [Output images](https://github.com/nvtoan263/IAC-Udagram-ToanNV15/tree/main/4.%20Final%20Outputs)
 
