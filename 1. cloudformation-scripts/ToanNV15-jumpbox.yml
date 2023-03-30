@@ -1,0 +1,76 @@
+Description: >
+  Trainee: ToanNV15
+  This is final cloudformation script to creat an EC2 instanace in public subnet group. Used as bridge to remote to server in private subnet
+Parameters:
+    EnvironmentName:
+        Description: Environment name IAC-Udagram-ToanNV15
+        Type: String
+    AMIforServer:
+        Description: AMI for server - this is hardcoded in parameter file. ami-007855ac798b5175e
+        Type: String
+    KeyPairforServer:
+        Description: Key pair for server - this is hardcoded in parameter file. VocareumKey2
+        Type: String        
+Resources:
+###################### Start of Jumpbox creation ######################            
+# Trying to create IAM role to create EC2 instance as jumpbox
+# IAM Role to allow EC2 Session Manager to access our server
+  RoleForSSMAccess: 
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+# Instance Profile
+  JumpBoxServerInstanceProfile: 
+    Type: "AWS::IAM::InstanceProfile"
+    Properties: 
+      Roles: 
+        - !Ref RoleForSSMAccess
+#Jumpbox Security group
+  JumBoxSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH as ingress and keep all ports to internet access
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPCID"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 0
+          ToPort: 65535
+          CidrIp: 0.0.0.0/0
+#Jumpbox instance
+  JumpBoxInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref AMIforServer
+      KeyName: !Ref KeyPairforServer
+      InstanceType: t2.micro
+      IamInstanceProfile: !Ref JumpBoxServerInstanceProfile
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref JumBoxSecurityGroup
+          SubnetId:
+            Fn::ImportValue:
+              !Sub "${EnvironmentName}-PUB1-SN" #Place Jumpbox in Public subnet 1 group
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sdk"
+          Ebs:
+            VolumeSize: '10'
+###################### End of Jumpbox creation ######################

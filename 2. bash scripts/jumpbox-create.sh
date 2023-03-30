@@ -1,0 +1,2 @@
+aws cloudformation create-stack --stack-name stack-jumpbox --template-body file://ToanNV15-jumpbox.yml  --parameters file://server-parameters.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1
+#aws cloudformation update-stack --stack-name stack-jumpbox --template-body file://ToanNV15-jumpbox.yml  --parameters file://server-parameters.json --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" --region=us-east-1

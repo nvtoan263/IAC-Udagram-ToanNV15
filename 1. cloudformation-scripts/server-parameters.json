@@ -1,0 +1,14 @@
+[
+	{
+		"ParameterKey": "EnvironmentName",
+		"ParameterValue": "IAC-Udagram-ToanNV15"
+	},
+	{
+		"ParameterKey": "AMIforServer",
+		"ParameterValue": "ami-007855ac798b5175e"
+	},
+	{
+		"ParameterKey": "KeyPairforServer",
+		"ParameterValue": "VocareumKey2"
+	}	
+]
