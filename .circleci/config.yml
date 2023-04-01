@@ -7,9 +7,9 @@ version: 2.1
 jobs:
   say-hello:
     # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/configuration-reference/#executor-job
+    # See:  
     docker:
-      - image: cimg/base:stable
+      - image: circleci/node:13.8.0
     # Add steps to the job
     # See: https://circleci.com/docs/configuration-reference/#steps
     steps:
@@ -17,6 +17,8 @@ jobs:
       - run:
           name: "Say hello"
           command: "echo Hello, World!"
+          command: "echo My pipeline id is << pipeline.id >> and my git branch is << pipeline.git.branch >>."eho
+          command: "echo $PROJECT_OWNER"
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
