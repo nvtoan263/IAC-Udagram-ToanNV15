@@ -16,7 +16,8 @@ jobs:
       - checkout
       - run:
           name: "Say hello"
-          command: echo {$PROJECT_OWNER}
+          command: |
+            echo $PROJECT_OWNER
 
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
