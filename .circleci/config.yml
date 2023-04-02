@@ -14,11 +14,9 @@ jobs:
     # See: https://circleci.com/docs/configuration-reference/#steps
     steps:
       - checkout
-      - run:
-          name: "Say hello"
-          command: |
-            echo $PROJECT_OWNER
-
+      - run: echo $PROJECT_OWNER
+      - run: echo $CIRCLE_BUILD_NUM            
+      - run: echo $CIRCLE_SHA1
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
