@@ -12,11 +12,20 @@ jobs:
       - image: circleci/node:latest
     # Add steps to the job
     # See: https://circleci.com/docs/configuration-reference/#steps
+    persist_to_workspace:
+      root: /tmp/workspace    
     steps:
       - checkout
       - run: echo $PROJECT_OWNER
       - run: echo $CIRCLE_BUILD_NUM            
-      - run: echo $CIRCLE_SHA1
+      - run: echo "Hi Toan, you are being father now :)" > hello_world.txt
+  print-hello:
+    docker:
+      - image: circleci/node:latest
+    attach_workspace:
+      at: /tmp/workspace
+    steps:
+      - run: cat hello_world.txt
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
