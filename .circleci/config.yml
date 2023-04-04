@@ -25,5 +25,5 @@ workflows:
     jobs:
       - writting
       - reading:
-        requires:
+          requires:
           - writting
