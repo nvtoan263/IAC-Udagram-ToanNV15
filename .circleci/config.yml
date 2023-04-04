@@ -9,17 +9,17 @@ jobs:
     executor: my-executor
     steps:
       - run: mkdir -p workspace
-      - run: echo "Hi Toan, you are being father :)" > workspace/$CIRCLE_BUILD_NUM
+      - run: echo "Hi Toan, you are being father :)" > workspace/output
       - persist_to_workspace:
           root: workspace
           paths:
-            - $CIRCLE_BUILD_NUM
+            - output
   reading:
     executor: my-executor
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - run: cat /tmpworkspace/$CIRCLE_BUILD_NUM
+      - run: cat /tmpworkspace/output
 workflows:
   say-hello-workflow:
     jobs:
