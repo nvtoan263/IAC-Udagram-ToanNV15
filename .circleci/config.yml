@@ -1,37 +1,33 @@
 # Use the latest 2.1 version of CircleCI pipeline process engine.
 # See: https://circleci.com/docs/configuration-reference
 version: 2.1
-
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/configuration-reference/#jobs
+executors:
+  my-executor:
+    docker:
+      - image: circleci/node:latest
+    working_directory: /tmp
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See:  
-    docker:
-      - image: circleci/node:latest
-    # Add steps to the job
-    # See: https://circleci.com/docs/configuration-reference/#steps
+  writting:
+    executor: my-executor
     steps:
-      - run: mkdir - p /tmp/workspace
-      - run: echo $PROJECT_OWNER
-      - run: echo $CIRCLE_BUILD_NUM            
-      - run: echo "Hi Toan, you are being father :)" > $CIRCLE_BUILD_NUM
-      persist_to_workspace:
-        root: /tmp/workspace
-        paths:
-          - $CIRCLE_BUILD_NUM
-  print-hello:
-    docker:
-      - image: circleci/node:latest
+      - run: mkdir -p workspace
+      - run: echo "Hi Toan, you are being father :)" > workspace/$CIRCLE_BUILD_NUM
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - $CIRCLE_BUILD_NUM
+  reading:
+    executor: my-executor
     steps:
-      attach_workspace:
-        at:  /tmp/workspace
-      - run: cat /tmp/workspace/$CIRCLE_BUILD_NUM
+    - attach_workspace:
+          at: /tmp/workspace
+      run: cat /tmpworkspace/$CIRCLE_BUILD_NUM
 # Orchestrate jobs using workflows
 # See: https://circleci.com/docs/configuration-reference/#workflows
 workflows:
   say-hello-workflow:
     jobs:
-      - say-hello
-      - print-hello
+      - writting
+      - reading:
+        requires:
+          - writting
