@@ -9,6 +9,7 @@ jobs:
     executor: my-executor
     steps:
       - run: mkdir -p workspace
+      - run: touch workspace/$CIRCLE_BUILD_NUM
       - run: echo "Hi Toan, you are being father :)" > workspace/$CIRCLE_BUILD_NUM
       - persist_to_workspace:
           root: workspace
