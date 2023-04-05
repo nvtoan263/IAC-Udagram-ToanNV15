@@ -15,7 +15,7 @@ commands:
         default: 30
         type: integer
     steps:
-      - run: echo "Hello <<parameters.name>>. You are <<parameters.age>> rights?"
+      - run: echo "Hello <<parameters.first-name>>. You are <<parameters.age>> rights?"
 jobs:
   writting:
     executor: my-executor
