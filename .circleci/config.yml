@@ -5,7 +5,7 @@ executors:
       - image: circleci/node:latest
     working_directory: /tmp
 commands:
-  boss_greeting:
+  boss-greeting:
     description: "I am trying to try command to reuse some of my code"    
     parameters:
       name:
@@ -20,7 +20,7 @@ jobs:
   writting:
     executor: my-executor
     steps:
-      - boss_greeting:
+      - boss-greeting:
           name: "Toan"
           age: 30
       - run: mkdir -p workspace
@@ -32,7 +32,7 @@ jobs:
   reading:
     executor: my-executor
     steps:
-      - boss_greeting:
+      - boss-greeting:
           name: "Ngan"
           age: 25    
       - attach_workspace:
