@@ -14,7 +14,7 @@ commands:
       age:
         default: 30
         type: integer
-    stepds:
+    steps:
       - run: echo "Hello <<parameters.name>>. You are <<parameters.age>> rights?"
 jobs:
   writting:
