@@ -9,7 +9,7 @@ commands:
     description: "I am trying to try command to reuse some of my code"    
     parameters:
       name:
-        defaut: "toan"
+        default: "toan"
         type: string
       age:
         default: 30
