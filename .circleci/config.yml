@@ -8,7 +8,7 @@ commands:
   boss-greeting:
     description: "I am trying to try command to reuse some of my code"    
     parameters:
-      name:
+      first-name:
         default: "toan"
         type: string
       age:
@@ -21,7 +21,7 @@ jobs:
     executor: my-executor
     steps:
       - boss-greeting:
-          name: "Toan"
+          first-name: "Toan"
           age: 30
       - run: mkdir -p workspace
       - run: echo "Hi Toan, you are being father :)" > workspace/echo-output
@@ -33,7 +33,7 @@ jobs:
     executor: my-executor
     steps:
       - boss-greeting:
-          name: "Ngan"
+          first-name: "Ngan"
           age: 25    
       - attach_workspace:
           at: /tmp/workspace
