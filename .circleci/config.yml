@@ -38,6 +38,17 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run: cat /tmp/workspace/echo-output
+  - misc:
+    executor: my-executor
+    steps:
+      - run: |
+          if [[ 'cat /tmp/workspace/echo-output' == "some testing code"]]; then
+            echo "contents is expected";
+          else
+            echo "contents is something else"; exit 1
+          fi
+      - run: echo "above task has some failure"
+          when: on_fail
 workflows:
   say-hello-workflow:
     jobs:
@@ -45,3 +56,4 @@ workflows:
       - reading:
           requires:
           - writting
+      - misc
