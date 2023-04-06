@@ -42,7 +42,7 @@ jobs:
     executor: my-executor
     steps:
       - run: |
-          if [[ 'cat /tmp/workspace/echo-output' == "some testing code"]]; then
+          if [[ 'cat /tmp/workspace/echo-output' == "some testing code" ]]; then
             echo "contents is expected";
           else
             echo "contents is something else"; exit 1
