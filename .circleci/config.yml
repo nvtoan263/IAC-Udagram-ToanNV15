@@ -47,7 +47,9 @@ jobs:
           else
             echo "contents is something else"; exit 1
           fi
-      - run: echo "above task has some failure"
+      - run:
+          name: shout out on some failure
+          command: echo "Hi Toan, now you see how on_fail works right?"
           when: on_fail
 workflows:
   say-hello-workflow:
