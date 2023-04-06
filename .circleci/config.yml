@@ -38,7 +38,7 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run: cat /tmp/workspace/echo-output
-  - misc:
+  misc:
     executor: my-executor
     steps:
       - run: |
