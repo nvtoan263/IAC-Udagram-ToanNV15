@@ -2,8 +2,7 @@ version: 2.1
 executors:
   my-executor:
     docker:
-#      - image: circleci/node:latest
-      - image: amazon/aws-cli
+      - image: circleci/node:latest
     working_directory: /tmp
 commands:
   boss-greeting:
@@ -53,7 +52,8 @@ jobs:
           command: echo "Hi Toan, now you see how on_fail works right?"
           when: on_fail
   create_infrastructure:
-    executor: my-executor
+    docker:
+      - image: amazon/aws-cli 
     steps:
       - checkout
       - run: | 
