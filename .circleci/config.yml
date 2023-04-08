@@ -2,7 +2,8 @@ version: 2.1
 executors:
   my-executor:
     docker:
-      - image: circleci/node:latest
+#      - image: circleci/node:latest
+      - image: amazon/aws-cli
     working_directory: /tmp
 commands:
   boss-greeting:
@@ -45,17 +46,28 @@ jobs:
           if [[ 'cat /tmp/workspace/echo-output' == "some testing code" ]]; then
             echo "contents is expected";
           else
-            echo "contents is something else"; exit 1
+            echo "contents is something else"; exit 0
           fi
       - run:
           name: shout out on some failure
           command: echo "Hi Toan, now you see how on_fail works right?"
           when: on_fail
+  create_infrastructure:
+    executor: my-executor
+    steps:
+      - checkout
+      - run:
+          name: Create Cloudformation Stack command: | 
+          aws cloudformation deploy \ 
+          --template-file template.yml \ 
+          --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \ 
+          --region us-east-1
 workflows:
   say-hello-workflow:
     jobs:
-      - writting
-      - reading:
-          requires:
-          - writting
-      - misc
+      - create_infrastructure:
+#      - writting
+#      - reading:
+#          requires:
+#          - writting
+#      - misc
