@@ -56,8 +56,7 @@ jobs:
     executor: my-executor
     steps:
       - checkout
-      - run:
-          name: Create Cloudformation Stack command: | 
+      - run: | 
           aws cloudformation deploy \ 
           --template-file template.yml \ 
           --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} \ 
