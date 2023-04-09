@@ -74,10 +74,28 @@ jobs:
           name: Run play book and configure server
           command: | 
             ansible-playbook -i inventory main.yml
+  smoke-test:
+    docker:
+      - image: alpine:latest
+    steps:
+      - run: apk add --update curl
+      - run:
+          name: Somke Test
+          command: |
+            URL="https://www.google.com"
+            if curl -s --head ${URL}
+            then
+              return 0
+            else
+              return -1
+            fi
 workflows:
-  install-ansible-start-server:
+  testing:
     jobs:
-      - configure_infrastructure
+      - smoke-test
+#  install-ansible-start-server:
+#    jobs:
+#      - configure_infrastructure
 #      - writting
 #      - reading:
 #          requires:
