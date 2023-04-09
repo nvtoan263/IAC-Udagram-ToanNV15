@@ -1,6 +1,10 @@
 ---
 # Exercise: Define Ansible Playbook
-- name: Exercise 
-  hosts: localhost
+- name: Exercise for setting up server on EC2 instance
+  hosts: ubuntu
+  user: ubuntu
+  become: true
+  become_method: sudo
+  become_user: root
   roles:
    - setup
