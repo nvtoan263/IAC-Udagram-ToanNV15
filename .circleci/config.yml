@@ -51,13 +51,29 @@ jobs:
           name: shout out on some failure
           command: echo "Hi Toan, now you see how on_fail works right?"
           when: on_fail
-  create_infrastructure:
+  create_simple_infrastructure:
     docker:
       - image: amazon/aws-cli 
     steps:
       - checkout
       - run: | 
           aws cloudformation deploy --template-file template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1
+
+  create_infrastructure:
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["ee:47:ec:7f:49:b2:c8:0e:73:71:79:6e:bc:98:85:c6"]
+      - run:
+        name: Install Ansible
+        command: |
+          apk add --update ansible
+      - run:
+        name: Run play book and configure server
+        command: |
+          ansible-playbook -i inventory main.yml
 workflows:
   say-hello-workflow:
     jobs:
