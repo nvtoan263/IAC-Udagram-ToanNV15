@@ -117,8 +117,6 @@ workflows:
   create-infra:
     jobs:
       - create_infrastructure
-  testing:
-    jobs:
       - smoke-test:
           requires:
           - create_infrastructure
