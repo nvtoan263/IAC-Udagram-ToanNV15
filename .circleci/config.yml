@@ -120,6 +120,7 @@ jobs:
           if [[ 'cat /tmp/cicd-workspace/output.txt' == "CREATE_COMPLETE" ]]; then
             echo "Infrastructure created successfully";
           else
+            cat /tmp/cicd-workspace/output.txt 
             echo "Infrastructure was not created"; exit 1
           fi      
       - destroy_environment
