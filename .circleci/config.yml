@@ -117,7 +117,7 @@ jobs:
           paths:
             - output.txt
       - run: |
-          if [[ 'cat /tmp/cicd-workspace/output.txt' = "CREATE_COMPLETE" ]]; then
+          if [[ $(cat /tmp/cicd-workspace/output.txt) == "CREATE_COMPLETE" ]]; then
             echo "Infrastructure created successfully";
           else
             cat /tmp/cicd-workspace/output.txt 
