@@ -76,7 +76,8 @@ jobs:
             fi
             sleep 5
           done
-      - run: echo "CREATE_COMPLETE" > output
+      - run: |
+          echo "CREATE_COMPLETE" > output
         - persist_to_workspace:
             root: .
             paths:
