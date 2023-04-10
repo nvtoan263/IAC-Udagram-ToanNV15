@@ -64,6 +64,11 @@ jobs:
       - image: amazon/aws-cli 
     steps:
       - checkout
+      - run:
+          name: Install JQ for parsing json file
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y jq
       - run: | 
           aws cloudformation deploy --template-file template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1
       - run: |
@@ -76,7 +81,6 @@ jobs:
             fi
             sleep 5
           done
-      - run: |
           echo "CREATE_COMPLETE" > output
       - persist_to_workspace:
           root: .
