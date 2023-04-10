@@ -68,7 +68,8 @@ jobs:
           name: Install JQ for parsing json file
           command: |
             yum install -y jq;
-            yum install -y tar
+            yum install -y tar;
+            yum install -y gzip
       - run: | 
           aws cloudformation deploy --template-file template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1
       - run: |
