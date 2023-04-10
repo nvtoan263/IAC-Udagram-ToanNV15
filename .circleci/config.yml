@@ -16,6 +16,14 @@ commands:
         type: integer
     steps:
       - run: echo "Hello <<parameters.first-name>>. You are <<parameters.age>> rights?"
+  destroy_environment:
+    description: "Delete created infrastructure if fail to ping"
+    steps:
+      - run:
+          name: "Delete infrastructure"
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
 jobs:
   writting:
     executor: my-executor
@@ -58,7 +66,21 @@ jobs:
       - checkout
       - run: | 
           aws cloudformation deploy --template-file template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1
-
+      - run: |
+          stack_status="CREATE_IN_PROGRESS"
+          while [ "$stack_status" != "CREATE_COMPLETE" ]; do
+            stack_status=$(aws cloudformation describe-stacks --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} | jq -r '.Stacks[0].StackStatus')
+            if [ "$stack_status" == "ROLLBACK_COMPLETE" ]; then
+              echo "CloudFormation stack creation failed."
+              exit 1
+            fi
+            sleep 5
+          done
+      - run: echo "CREATE_COMPLETE" > output
+        - persist_to_workspace:
+            root: .
+            paths:
+              - output
   configure_infrastructure:
     docker:
       - image: python:3.8
@@ -78,21 +100,27 @@ jobs:
     docker:
       - image: alpine:latest
     steps:
-      - run: apk add --update curl
-      - run:
-          name: Somke Test
-          command: |
-            URL="https://www.google.com"
-            if curl -s --head ${URL}
-            then
-              return 0
-            else
-              return -1
-            fi
+      - checkout
+      - attach_workspace:
+          at: .
+          paths:
+            - output
+      - run: |
+          if [[ 'cat output' == "CREATE_COMPLETE" ]]; then
+            echo "Infrastructure created successfully";
+          else
+            echo "Infrastructure was not created"; exit 1
+          fi      
+      - destroy_environment
 workflows:
+  create-infra:
+    jobs:
+      - create_infrastructure
   testing:
     jobs:
-      - smoke-test
+      - smoke-test:
+          requires:
+          - create_infrastructure
 #  install-ansible-start-server:
 #    jobs:
 #      - configure_infrastructure
