@@ -1,9 +1,11 @@
 version: 2.1
 executors:
+  aws-executor:
+    docker:
+      - image: amazon/aws-cli
   my-executor:
     docker:
-      - image: circleci/node:latest
-    working_directory: /tmp
+      - image: python:3.8
 commands:
   boss-greeting:
     description: "I am trying to try command to reuse some of my code"    
@@ -16,6 +18,14 @@ commands:
         type: integer
     steps:
       - run: echo "Hello <<parameters.first-name>>. You are <<parameters.age>> rights?"
+  install-dependencies:
+    description: "Install some of necessary dependency for amazon/aws-cli image"
+    steps:
+      - run: yum install -y jq
+      - run: yum install -y tar
+      - run: yum install -y gzip
+
+
   destroy_environment:
     description: "Delete created infrastructure if fail to ping"
     steps:
@@ -60,16 +70,10 @@ jobs:
           command: echo "Hi Toan, now you see how on_fail works right?"
           when: on_fail
   create_infrastructure:
-    docker:
-      - image: amazon/aws-cli 
+    executor: aws-executor
     steps:
       - checkout
-      - run:
-          name: Install JQ for parsing json file
-          command: |
-            yum install -y jq;
-            yum install -y tar;
-            yum install -y gzip
+      - install-dependencies
       - run: | 
           aws cloudformation deploy --template-file template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1
       - run: |
@@ -82,11 +86,11 @@ jobs:
             fi
             sleep 5
           done
-          echo "CREATE_COMPLETE" > output
+          echo "CREATE_COMPLETE" > /tmp/cicd-workspace/output.txt
       - persist_to_workspace:
-          root: .
+          root: /tmp/cicd-workspace
           paths:
-            - output
+            - output.txt
   configure_infrastructure:
     docker:
       - image: python:3.8
@@ -103,16 +107,16 @@ jobs:
           command: | 
             ansible-playbook -i inventory main.yml
   smoke-test:
-    docker:
-      - image: alpine:latest
+    executor: aws-executor
     steps:
       - checkout
+      - install-dependencies
       - attach_workspace:
-          at: .
+          at: /tmp/cicd-workspace
           paths:
-            - output
+            - output.txt
       - run: |
-          if [[ 'cat output' == "CREATE_COMPLETE" ]]; then
+          if [[ 'cat /tmp/cicd-workspace/output.txt' == "CREATE_COMPLETE" ]]; then
             echo "Infrastructure created successfully";
           else
             echo "Infrastructure was not created"; exit 1
