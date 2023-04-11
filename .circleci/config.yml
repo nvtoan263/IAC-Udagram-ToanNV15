@@ -24,6 +24,7 @@ commands:
       - run: yum install -y jq
       - run: yum install -y tar
       - run: yum install -y gzip
+      - run: yum update -y awscli
 
 
   destroy_environment:
