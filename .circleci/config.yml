@@ -75,7 +75,7 @@ jobs:
       - checkout
       - install-dependencies
       - run: | 
-          aws cloudformation deploy --template-file template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1
+          aws cloudformation deploy --template-file create-ec2-template.yml --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5} --region us-east-1
       - run: mkdir -p /tmp/cicd-workspace
       - run: |
           stack_status="CREATE_IN_PROGRESS"
@@ -124,13 +124,78 @@ jobs:
             echo "Infrastructure was not created"; exit 1
           fi      
       - destroy_environment
+  create_and_deploy_front_end:
+    executor: aws-executor
+    steps:
+      - checkout
+      - run:
+          name: Execute cloud formation to create S3 Bucket
+          command: |
+            aws cloudformation deploy \
+            --template-file create-s3bucket-template.yml \
+            --stack-name stack-create-bucket-${CIRCLE_WORKFLOW_ID:0:5} \
+            --parameter-overrides MyBucketName="cicd-bucket-${CIRCLE_WORKFLOW_ID:0:5}"
+  get_last_deployment_id:
+    executor: aws-executor
+    steps:
+      - checkout
+      - install-dependencies
+      - run:
+          name: Fetch and save the old pipeline ID (bucket name) responsible for the last release.
+          command: |
+            aws cloudformation \
+            list-exports --query "Exports[?Name==\`PipelineID\`].Value" \
+            --no-paginate --output text > ~/textfile.txt
+      - persist_to_workspace:
+          root: ~/
+          paths: 
+            - textfile.txt      
+  promote_to_production:
+    executor: aws-executor
+    steps:
+      - checkout
+      - run:
+          name: Execute create-cloudfront-template.yml
+          command: |
+            aws cloudformation deploy \
+            --template-file create-cloudfront-template.yml \
+            --stack-name production-distro \
+            --parameter-overrides PipelineID="mybucket-${CIRCLE_WORKFLOW_ID:0:5}"
+  clean_up_old_front_end:
+    executor: aws-executor
+    steps:
+      - checkout
+      - install-dependencies
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Destroy the previous S3 bucket and CloudFormation stack. 
+          # Use $OldBucketID environment variable or mybucket644752792305 below.
+          # Similarly, you can create and use $OldStackID environment variable in place of production-distro 
+          command: |
+            export OldBucketID=$(cat ~/textfile.txt)
+            aws s3 rm "s3://${OldBucketID}" --recursive
+
 workflows:
-  create-infra:
+  create_deploy_frontend:
     jobs:
-      - create_infrastructure
-      - smoke-test:
-          requires:
-          - create_infrastructure
+      - create_and_deploy_front_end
+      - promote_to_production:
+          requires: 
+            - create_and_deploy_front_end
+        - get_last_deployment_id
+#        - clean_up_old_front_end:
+#          requires:
+#            - get_last_deployment_id
+#            - promote_to_production 
+
+#  create-infra:
+#    jobs:
+#      - create_infrastructure
+#      - smoke-test:
+#          requires:
+#          - create_infrastructure
+
 #  install-ansible-start-server:
 #    jobs:
 #      - configure_infrastructure
