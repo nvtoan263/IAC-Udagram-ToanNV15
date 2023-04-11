@@ -161,7 +161,7 @@ jobs:
             aws cloudformation deploy \
             --template-file create-cloudfront-template.yml \
             --stack-name production-distro \
-            --parameter-overrides PipelineID="mybucket-${CIRCLE_WORKFLOW_ID:0:5}"
+            --parameter-overrides PipelineID="cicd-bucket-${CIRCLE_WORKFLOW_ID:0:5}"
   clean_up_old_front_end:
     executor: aws-executor
     steps:
