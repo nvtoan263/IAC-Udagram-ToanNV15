@@ -135,6 +135,7 @@ jobs:
             --template-file create-s3bucket-template.yml \
             --stack-name stack-create-bucket-${CIRCLE_WORKFLOW_ID:0:5} \
             --parameter-overrides MyBucketName="cicd-bucket-${CIRCLE_WORKFLOW_ID:0:5}"
+      - run: aws s3 sync . s3://cicd-bucket-${CIRCLE_WORKFLOW_ID:0:5} --delete
   get_last_deployment_id:
     executor: aws-executor
     steps:
@@ -183,11 +184,11 @@ workflows:
       - promote_to_production:
           requires: 
           - create_and_deploy_front_end
-      - get_last_deployment_id
-#        - clean_up_old_front_end:
-#          requires:
-#            - get_last_deployment_id
-#            - promote_to_production 
+        - get_last_deployment_id
+        - clean_up_old_front_end:
+          requires:
+            - get_last_deployment_id
+            - promote_to_production 
 
 #  create-infra:
 #    jobs:
